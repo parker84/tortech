@@ -14,7 +14,7 @@ st.set_page_config(
 
 st.title('🦖 TorTech')
 
-st.caption('This database is home to the top Toronto-Based Tech Companies 🇨🇦')
+st.caption('This database houses the top Toronto-Based Tech Companies 🇨🇦')
 
 
 df = pd.read_csv('./data/tortech_database.csv').rename(
