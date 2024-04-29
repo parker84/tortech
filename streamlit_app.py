@@ -12,9 +12,9 @@ st.set_page_config(
     initial_sidebar_state='collapsed'
 )
 
-st.title('🦖 TorTech')
+st.title('TorTech 🦖 Database')
 
-st.caption('This database houses the top Toronto-Based Tech Companies 🇨🇦')
+st.caption('Explore the top Toronto-Based Tech Companies 🇨🇦')
 
 
 df = pd.read_csv('./data/tortech_database.csv').rename(
