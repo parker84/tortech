@@ -63,5 +63,5 @@ st.dataframe(
             display_text="https://(.*?)/"
         )
     },
-    height=600
+    height=650
 )
