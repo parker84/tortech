@@ -11,7 +11,7 @@ st.set_page_config(
     page_icon='🦖',
     layout='wide',
 )
-
+# TODO: find more  companies to add in
 st.title('TorTech 🦖 Database')
 
 st.caption('Explore the top Toronto-Based Tech Companies 🇨🇦')
@@ -121,7 +121,7 @@ if df_filtered.shape[0] > 0:
                 display_text="https://(.*?)/"
             )
         },
-        height=650
+        height=875
     )
 else:
     st.error('No Companies That Fit This Criteria')
