@@ -22,6 +22,8 @@ df = pd.read_csv('./data/tortech_database.csv').rename(
         'Company URL': 'Website'
     }
 )
+df['LinkedIn'] = df['LinkedIn'].str.replace('www.', '')
+df['Website'] = df['Website'].str.replace('www.', '')
 df['Followers'] = df['Followers'].str.replace('k', '').astype(float)
 df['max_employees'] = [
     int(x.split('-')[-1].replace('k', '').replace('+', ''))
@@ -124,3 +126,5 @@ if df_filtered.shape[0] > 0:
     )
 else:
     st.error('No Companies That Fit This Criteria')
+
+st.caption('Want to add a company? [Submit here](https://stan.store/brydon/p/tortech-new-company)')
