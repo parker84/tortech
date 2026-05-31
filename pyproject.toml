@@ -1,0 +1,12 @@
+[project]
+name = "tortech"
+version = "0.1.0"
+description = "Database to track the top tech companies based out of Toronto"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "streamlit==1.33.0",
+    "pandas==2.2.2",
+    "coloredlogs==15.0.1",
+    "python-decouple==3.8",
+]

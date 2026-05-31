@@ -9,13 +9,14 @@ TorTech is a single-page Streamlit app that displays a filterable database of to
 ## Commands
 
 ```bash
-# Set up environment (Python venv already exists at ./venv)
-source venv/bin/activate
-pip install -r requirements.txt
+# Install dependencies (creates .venv from pyproject.toml + uv.lock)
+uv sync
 
 # Run the app locally
-streamlit run streamlit_app.py
+uv run streamlit run streamlit_app.py
 ```
+
+Dependencies are managed with **uv**: `pyproject.toml` declares the direct deps, `uv.lock` pins the full resolved tree. Add a dependency with `uv add <pkg>`. There is no `requirements.txt`.
 
 `LOG_LEVEL` (default `INFO`) is read via `python-decouple` from environment or a `.env` file.
 
@@ -48,7 +49,7 @@ Format rules — the parser in `streamlit_app.py` is brittle; violating these cr
 
 After any edit, verify the app's parse pipeline succeeds:
 ```bash
-./venv/bin/python -c "
+uv run python -c "
 import pandas as pd
 df = pd.read_csv('./data/tortech_database.csv').rename(columns={'LinkedIn URL':'LinkedIn','Company URL':'Website'})
 df['Followers'].str.replace('k','').astype(float)
