@@ -13,7 +13,7 @@ st.set_page_config(
 )
 st.title('TorTech 🦖 Database')
 
-st.caption('Explore the top Toronto-Based Tech Companies 🇨🇦')
+st.caption('Explore the top tech companies across Canada 🇨🇦')
 
 
 df = pd.read_csv('./data/tortech_database.csv').rename(
@@ -50,11 +50,27 @@ tag_options = [
     sorted(tag_counts.items(), key=lambda x: x[1], reverse=True)
 ]
 
+all_hqs = []
+for hq in df['HQ']:
+    for city in hq.split('/'):
+        all_hqs.append(city.strip())
+hq_counts = Counter(all_hqs)
+hq_options = [
+    val[0] for val in
+    sorted(hq_counts.items(), key=lambda x: x[1], reverse=True)
+]
+
 st.sidebar.subheader('⚙️ Filters')
 
 employees = st.sidebar.multiselect(
     'Employees',
     options=['Select All'] + employee_options,
+    default=['Select All']
+)
+
+locations = st.sidebar.multiselect(
+    'HQ',
+    options=['Select All'] + hq_options,
     default=['Select All']
 )
 
@@ -64,7 +80,7 @@ tags = st.sidebar.multiselect(
     default=['Select All']
 )
 
-st.sidebar.caption("Want to say thanks? \n[Buy me a coffee ☕](https://www.buymeacoffee.com/brydon)")
+st.sidebar.caption("Built by [Brydon](https://www.linkedin.com/in/brydon-parker/) 🍁")
 
 df_filtered = df.copy()
 
@@ -72,6 +88,14 @@ if employees != ['Select All']:
     df_filtered = df_filtered[
         df_filtered['Employees'].isin(employees)
     ]
+
+if locations != ['Select All']:
+    selected_cities = [loc for loc in locations if loc != 'Select All']
+    df_filtered = df_filtered[df_filtered['HQ'].apply(
+        lambda hq: any(
+            city.strip() in selected_cities for city in hq.split('/')
+        )
+    )]
 
 if tags != ['Select All']:
     for tag in tags:
@@ -89,6 +113,7 @@ if tags != ['Select All']:
 df_filtered = df_filtered.sort_values(by=['Followers', 'max_employees'], ascending=False)
 df_filtered = df_filtered[[
     'Company',
+    'HQ',
     'Employees',
     'Followers',
     'Tags',
@@ -105,6 +130,9 @@ if df_filtered.shape[0] > 0:
         column_config={
             'Company': st.column_config.TextColumn(
                 "Company", width="Small"
+            ),
+            'HQ': st.column_config.TextColumn(
+                "HQ", width="Small"
             ),
             'Followers': st.column_config.ProgressColumn(
                 "Followers",
@@ -128,4 +156,4 @@ if df_filtered.shape[0] > 0:
 else:
     st.error('No Companies That Fit This Criteria')
 
-st.caption('Want to add a company? [Submit here](https://stan.store/brydon/p/tortech-new-company)')
+st.caption('Want a company added, or have feedback? [Let me know](https://stan.store/brydon/p/tortech-new-company)')

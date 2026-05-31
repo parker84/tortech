@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-TorTech is a single-page Streamlit app that displays a filterable database of top Toronto-based tech companies. Live at https://tortech.streamlit.app/.
+TorTech is a single-page Streamlit app that displays a filterable database of top Canadian tech companies (originally Toronto-focused, now Canada-wide — the `TorTech` name is kept). Live at https://tortech.streamlit.app/.
 
 ## Commands
 
@@ -35,12 +35,12 @@ Key flow in `streamlit_app.py`:
 ## The data file
 
 All data lives in `data/tortech_database.csv` (the CSV *is* the database). Columns:
-`Company, LinkedIn URL, Company URL, Employees, Followers, Tags, Short Description, Long Description,` + a trailing empty 9th column (every row ends with a comma).
+`Company, HQ, LinkedIn URL, Company URL, Employees, Followers, Tags, Short Description, Long Description`. `HQ` is the headquarters city (e.g. `Toronto`); most rows are `Toronto`, with a few exceptions written as `City/Toronto` (e.g. `Ottawa/Toronto`, `Toronto/LA`).
 
 Format rules — the parser in `streamlit_app.py` is brittle; violating these crashes the app on load:
 - **`Followers`**: a number followed by lowercase `k` (e.g. `8k`, `277k`, `1086k`). Required. `.str.replace('k','').astype(float)` will fail if the `k` is missing or the cell is non-numeric. Round to the nearest thousand; values under 1000 → `1k`.
 - **`Employees`**: a LinkedIn company-size bucket whose last `-`-delimited segment is a number, optionally with `k` or `+`: `2-10`, `11-50`, `51-200`, `201-500`, `501-1k`, `1k-5k`, `5k-10k`, `10k+`.
-- **`Tags`**: comma-**space** separated (`Finance, AI`). The code splits on `", "`, so a comma with no space (`Finance,AI`) becomes one broken tag and won't filter correctly. (Some legacy rows still have this; new rows should use `, `.)
+- **`Tags`**: comma-**space** separated (`Fintech, AI`), max 3 per company. The code splits on `", "`, so a comma with no space (`Fintech,AI`) becomes one broken tag and won't filter correctly. Tags use a **controlled vocabulary** — reuse an existing tag rather than inventing a synonym (e.g. use `Legal`, not `LegalTech`/`Legal AI`; `Fintech`, not `Finance`/`Financial Services`; `Healthcare`, not `Health`/`Telehealth`; `Ecommerce`, not `Commerce`). Current vocabulary: AI, SaaS, Fintech, Ecommerce, Consumer, Marketing, Healthcare, EdTech, Security, Developer Tools, Legal, Networking, Creators, Media, Enterprise, HR, Data, Restaurants, Web3, Supply Chain, Real Estate, Insurance, Biotech, Logistics, Architecture, Autonomous Vehicles, Automotive, Space, Climate, Travel, GovTech, Productivity, Hardware, Quantum, Social Impact, Robotics.
 - `LinkedIn URL` → `https://linkedin.com/company/<slug>/`; `Company URL` → `https://<domain>/`.
 
 **The CSV is NOT one-line-per-row.** Long Description fields contain embedded newlines inside their quotes, so a single company spans multiple physical lines. Do not edit by physical line number or split on `\n`. To edit safely either:
@@ -70,4 +70,4 @@ How to gather it accurately (lessons learned doing this at scale):
 - Watch for: **name collisions** (multiple companies share a name, e.g. several "Lumi"/"Ideogram" — confirm the slug), **rebrands/redirects** (e.g. `/floatcard` 301-redirects to `/floatfinancial`), and **defunct companies** (e.g. Untether AI wound down in 2025 though its page persists) — flag these rather than silently trusting the page.
 - The follower/employee numbers drift constantly, so treat any snapshot as point-in-time and re-verify when revisiting.
 
-To add a new company, append a row with all 9 fields (trailing empty column) using the `csv` module for correct quoting, then run the verification snippet above.
+To add a new company, append a row with all 9 columns using the `csv` module for correct quoting, then run the verification snippet above. (`HQ` city comes from the same LinkedIn research — flag any company that isn't Toronto proper.)
