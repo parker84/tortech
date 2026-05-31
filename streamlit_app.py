@@ -108,6 +108,7 @@ if df_filtered.shape[0] > 0:
             ),
             'Followers': st.column_config.ProgressColumn(
                 "Followers",
+                help="LinkedIn followers",
                 format="%.0fk",
                 width="medium",
                 min_value=0,
